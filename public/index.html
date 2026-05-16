@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YSIM — Your Secret Is Mine</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- SCANLINES -->
+<div class="scanlines"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <span class="logo-y">Y</span><span class="logo-s">S</span><span class="logo-i">I</span><span class="logo-m">M</span>
+  </div>
+  <div class="tagline">YOUR SECRET IS MINE</div>
+  <nav class="tabs">
+    <button class="tab active" data-tab="encrypt">ENCRYPT</button>
+    <button class="tab" data-tab="decrypt">DECRYPT</button>
+    <button class="tab" data-tab="ai">AI ASSISTANT</button>
+  </nav>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ── ENCRYPT TAB ── -->
+  <section id="tab-encrypt" class="tab-content active">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">🔒</span>
+        <span>CREATE SECRET MESSAGE</span>
+      </div>
+
+      <div class="form-group">
+        <label>YOUR MESSAGE</label>
+        <textarea id="plaintext" placeholder="Type your secret message here..." rows="5"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>ENCRYPTION ALGORITHM</label>
+          <select id="algo">
+            <option value="aes">AES-256-GCM (Strongest)</option>
+            <option value="xor">XOR Cipher</option>
+            <option value="vigenere">Vigenère Cipher</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>EXPIRY TIME</label>
+          <select id="expiry">
+            <option value="">Never</option>
+            <option value="5">5 minutes</option>
+            <option value="15">15 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="60">1 hour</option>
+            <option value="1440">24 hours</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>ENCRYPTION KEY / PASSPHRASE</label>
+          <input type="password" id="enc-key" placeholder="Enter your secret key...">
+        </div>
+        <div class="form-group">
+          <label>LOCK WITH PASSPHRASE <span class="optional">(optional)</span></label>
+          <input type="password" id="enc-pass" placeholder="Reader must enter this to unlock...">
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-encrypt">🔐 ENCRYPT & GENERATE LINK</button>
+
+      <!-- Result -->
+      <div id="encrypt-result" class="result-box hidden">
+        <div class="result-header">✅ SECRET LINK GENERATED</div>
+        <div class="result-warning">⚠ This message self-destructs after ONE read.</div>
+        <div class="link-box">
+          <input type="text" id="secret-link" readonly>
+          <button class="btn-copy" id="btn-copy">COPY</button>
+        </div>
+        <div class="cipher-preview">
+          <label>CIPHERTEXT PREVIEW</label>
+          <div id="cipher-text" class="cipher-display"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DECRYPT TAB ── -->
+  <section id="tab-decrypt" class="tab-content">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">🔓</span>
+        <span>READ SECRET MESSAGE</span>
+      </div>
+
+      <div id="read-mode">
+        <!-- Auto-populated if /read/:id URL -->
+        <div class="form-group">
+          <label>MESSAGE ID OR LINK</label>
+          <input type="text" id="msg-id-input" placeholder="Paste message ID or full link...">
+        </div>
+
+        <div class="form-group">
+          <label>DECRYPTION KEY</label>
+          <input type="password" id="dec-key" placeholder="Enter the decryption key...">
+        </div>
+
+        <div class="form-group" id="passphrase-group" style="display:none">
+          <label>PASSPHRASE LOCK</label>
+          <input type="password" id="dec-pass" placeholder="Enter the passphrase to unlock...">
+        </div>
+
+        <button class="btn-primary" id="btn-decrypt">🔓 DECRYPT MESSAGE</button>
+      </div>
+
+      <!-- Decrypted result -->
+      <div id="decrypt-result" class="result-box hidden">
+        <div class="result-header">✅ MESSAGE DECRYPTED</div>
+        <div class="result-warning">⚠ This message has been destroyed from the server.</div>
+        <div class="plaintext-display" id="decrypted-text"></div>
+        <button class="btn-secondary" id="btn-clear-decrypt">CLEAR & DESTROY LOCALLY</button>
+      </div>
+
+      <div id="decrypt-error" class="error-box hidden">
+        <span id="decrypt-error-msg"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── AI ASSISTANT TAB ── -->
+  <section id="tab-ai" class="tab-content">
+    <div class="card ai-card">
+      <div class="card-header">
+        <span class="card-icon">🤖</span>
+        <span>AI SECURITY ASSISTANT</span>
+        <span class="powered-by">Powered by Claude</span>
+      </div>
+
+      <div class="chat-window" id="chat-window">
+        <div class="chat-msg ai">
+          <span class="msg-label">YSIM·AI</span>
+          <span class="msg-text">Hello. I'm your secure communications assistant. Ask me anything about encryption, privacy, or cybersecurity.</span>
+        </div>
+      </div>
+
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Ask about encryption, privacy, security...">
+        <button class="btn-send" id="btn-send">SEND</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <span>YSIM — Your Secret Is Mine</span>
+  <span class="sep">·</span>
+  <span>By Fashipe Oluwadamilare Ayoola</span>
+  <span class="sep">·</span>
+  <span class="warn">End-to-end encrypted · Messages self-destruct after reading</span>
+</footer>
+
+<script src="/js/crypto.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
