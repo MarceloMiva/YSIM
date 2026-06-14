@@ -122,7 +122,7 @@ document.getElementById('btn-decrypt').addEventListener('click', async () => {
       data.ciphertext, data.iv, data.salt, key, data.algo
     );
 
-    document.getElementById('decrypted-text').textContent = plaintext;
+    activateSecurityMode(plaintext);
     document.getElementById('decrypt-result').classList.remove('hidden');
     document.getElementById('decrypt-result').scrollIntoView({ behavior: 'smooth' });
 
@@ -218,4 +218,40 @@ function showError(msg) {
 
 function hideError() {
   document.getElementById('decrypt-error').classList.add('hidden');
+}
+
+// ============================================
+// YSIM Security Integration
+// ============================================
+
+function activateSecurityMode(plaintext) {
+  // Init all protections
+  YSIMSecurity.init({
+    devToolsCallback: () => {
+      // Destroy message if devtools opened
+      document.getElementById('decrypted-text').innerHTML = '';
+      const el = document.getElementById('decrypt-result');
+      if (el) el.classList.add('hidden');
+      showError('decrypt-error', 'decrypt-error-msg',
+        '🔒 Security violation detected. Message destroyed.');
+    }
+  });
+
+  // Render message on canvas instead of plain HTML
+  const container = document.getElementById('decrypted-text');
+  if (container) {
+    YSIMSecurity.renderMessageOnCanvas(plaintext, 'decrypted-text');
+  }
+
+  // Show and start timer (30 seconds)
+  const timerEl = document.getElementById('ysim-timer');
+  if (timerEl) timerEl.style.display = 'block';
+
+  YSIMSecurity.startDestroyTimer(30, () => {
+    // Auto destroy after 30 seconds
+    if (container) container.innerHTML =
+      '<span style="color:#ff4444;font-family:monospace">🔥 Message auto-destroyed.</span>';
+    const timerEl = document.getElementById('ysim-timer');
+    if (timerEl) timerEl.style.display = 'none';
+  });
 }
