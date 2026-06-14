@@ -40,7 +40,7 @@ document.getElementById('btn-encrypt').addEventListener('click', async () => {
 
   try {
     const { ciphertext, iv, salt, algo: usedAlgo } = await YSIM_Crypto.encrypt(plaintext, key, algo);
-    const passHash = await YSIM_Crypto.hashPassphrase(pass || null);
+    const passHash = pass && pass.trim() ? await YSIM_Crypto.hashPassphrase(pass.trim()) : null;
 
     const body = {
       ciphertext,
@@ -107,7 +107,7 @@ document.getElementById('btn-decrypt').addEventListener('click', async () => {
   hideError();
 
   try {
-    const passHash = await YSIM_Crypto.hashPassphrase(pass || null);
+    const passHash = pass && pass.trim() ? await YSIM_Crypto.hashPassphrase(pass.trim()) : null;
     const url = `/api/message/${msgId}${passHash ? `?passHash=${passHash}` : ''}`;
 
     const res  = await fetch(url);
