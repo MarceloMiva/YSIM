@@ -137,7 +137,7 @@ const YSIM_Crypto = (() => {
   // ── Passphrase hash ──────────────────────────────
   async function hashPassphrase(pass) {
     if (!pass) return null;
-    const buf = await crypto.subtle.digest("SHA-256", encode(pass));
+    const enc = new TextEncoder(); const buf = await crypto.subtle.digest("SHA-256", enc.encode(pass));
     return toHex(buf);
   }
 
